@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>vuln-app</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">vuln-app</a>
+    <nav>
+      <% if (user) { %>
+        <a href="/posts">Posts</a>
+        <% if (user.role === 'administrator') { %>
+          <a href="/admin">Admin</a>
+        <% } %>
+        <span class="who">Hello, <%= user.username %> (<%= user.role %>)</span>
+        <form class="inline" method="post" action="/auth/logout">
+          <button type="submit">Logout</button>
+        </form>
+      <% } else { %>
+        <a href="/auth/login">Login</a>
+        <a href="/auth/register">Register</a>
+      <% } %>
+    </nav>
+  </header>
+  <main class="container">

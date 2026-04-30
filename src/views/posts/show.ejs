@@ -1,0 +1,19 @@
+<%- include('../partials/header') %>
+<article class="post">
+  <h1><%= post.title %></h1>
+  <p class="meta">by <%= post.author %> &mdash; <%= post.created_at %></p>
+  <pre class="body"><%= post.body %></pre>
+</article>
+
+<% if (user && user.id === post.user_id) { %>
+  <p>
+    <a href="/posts/<%= post.id %>/edit">Edit</a>
+    <form class="inline" method="post" action="/posts/<%= post.id %>/delete"
+          onsubmit="return confirm('Delete this post?');">
+      <button type="submit">Delete</button>
+    </form>
+  </p>
+<% } %>
+
+<p><a href="/posts">Back to list</a></p>
+<%- include('../partials/footer') %>

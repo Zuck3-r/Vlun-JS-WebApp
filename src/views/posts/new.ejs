@@ -1,0 +1,18 @@
+<%- include('../partials/header') %>
+<h1>New post</h1>
+<% if (error) { %>
+  <p class="error"><%= error %></p>
+<% } %>
+<form method="post" action="/posts">
+  <label>
+    Title
+    <input type="text" name="title" required />
+  </label>
+  <label>
+    Body
+    <textarea name="body" rows="6" required></textarea>
+  </label>
+  <button type="submit">Create</button>
+</form>
+<p><a href="/posts">Cancel</a></p>
+<%- include('../partials/footer') %>
