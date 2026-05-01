@@ -11,6 +11,7 @@
     <nav>
       <% if (user) { %>
         <a href="/posts">Posts</a>
+        <a href="/posts/mine">My posts</a>
         <% if (user.role === 'administrator') { %>
           <a href="/admin">Admin</a>
         <% } %>
