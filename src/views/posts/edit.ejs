@@ -1,0 +1,18 @@
+<%- include('../partials/header') %>
+<h1>Edit post</h1>
+<% if (error) { %>
+  <p class="error"><%= error %></p>
+<% } %>
+<form method="post" action="/posts/<%= post.id %>">
+  <label>
+    Title
+    <input type="text" name="title" value="<%= post.title %>" required />
+  </label>
+  <label>
+    Body
+    <textarea name="body" rows="6" required><%= post.body %></textarea>
+  </label>
+  <button type="submit">Update</button>
+</form>
+<p><a href="/posts/<%= post.id %>">Cancel</a></p>
+<%- include('../partials/footer') %>

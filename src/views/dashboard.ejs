@@ -1,0 +1,18 @@
+<%- include('partials/header') %>
+<h1>Dashboard</h1>
+<p>Welcome, <%= user.username %>.</p>
+<h2>Recent posts</h2>
+<% if (recent.length === 0) { %>
+  <p>No posts yet. <a href="/posts/new">Create one</a>.</p>
+<% } else { %>
+  <ul>
+    <% recent.forEach(function(p){ %>
+      <li>
+        <a href="/posts/<%= p.id %>"><%= p.title %></a>
+        <small>by <%= p.author %></small>
+      </li>
+    <% }) %>
+  </ul>
+  <p><a href="/posts">See all posts</a></p>
+<% } %>
+<%- include('partials/footer') %>
