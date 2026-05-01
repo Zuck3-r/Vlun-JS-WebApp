@@ -26,12 +26,14 @@ function getPostOr404(req, res) {
   return post;
 }
 
-function requireOwner(post, req, res) {
+function loadOwnPost(req, res) {
+  const post = getPostOr404(req, res);
+  if (!post) return null;
   if (post.user_id !== req.session.user.id) {
     res.status(403).render('error', { status: 403, message: 'Forbidden: not the owner' });
-    return false;
+    return null;
   }
-  return true;
+  return post;
 }
 
 router.get('/', (req, res) => {
@@ -43,6 +45,18 @@ router.get('/', (req, res) => {
     )
     .all();
   res.render('posts/index', { posts });
+});
+
+router.get('/mine', (req, res) => {
+  const posts = db
+    .prepare(
+      `SELECT id, title, created_at
+       FROM posts
+       WHERE user_id = ?
+       ORDER BY id DESC`
+    )
+    .all(req.session.user.id);
+  res.render('posts/mine', { posts });
 });
 
 router.get('/new', (req, res) => {
@@ -67,16 +81,14 @@ router.get('/:id', (req, res) => {
 });
 
 router.get('/:id/edit', (req, res) => {
-  const post = getPostOr404(req, res);
+  const post = loadOwnPost(req, res);
   if (!post) return;
-  if (!requireOwner(post, req, res)) return;
   res.render('posts/edit', { post, error: null });
 });
 
 router.post('/:id', (req, res) => {
   const post = getPostOr404(req, res);
   if (!post) return;
-  if (!requireOwner(post, req, res)) return;
   const { title, body } = req.body;
   if (!title || !body) {
     return res.status(400).render('posts/edit', { post, error: 'title and body required' });
@@ -86,9 +98,8 @@ router.post('/:id', (req, res) => {
 });
 
 router.post('/:id/delete', (req, res) => {
-  const post = getPostOr404(req, res);
+  const post = loadOwnPost(req, res);
   if (!post) return;
-  if (!requireOwner(post, req, res)) return;
   db.prepare('DELETE FROM posts WHERE id = ?').run(post.id);
   res.redirect('/posts');
 });

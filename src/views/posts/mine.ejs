@@ -1,0 +1,18 @@
+<%- include('../partials/header') %>
+<h1>My posts</h1>
+<p><a href="/posts/new">+ New post</a></p>
+<% if (posts.length === 0) { %>
+  <p>You haven't posted anything yet.</p>
+<% } else { %>
+  <ul class="post-list">
+    <% posts.forEach(function(p){ %>
+      <li>
+        <a href="/posts/<%= p.id %>"><%= p.title %></a>
+        <small>&mdash; <%= p.created_at %></small>
+        <a class="action" href="/posts/<%= p.id %>/edit">Edit</a>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>
+<p><a href="/posts">All posts</a></p>
+<%- include('../partials/footer') %>
