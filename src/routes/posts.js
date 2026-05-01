@@ -41,6 +41,7 @@ router.get('/', (req, res) => {
     .prepare(
       `SELECT posts.id, posts.title, posts.created_at, users.username AS author
        FROM posts JOIN users ON users.id = posts.user_id
+       WHERE posts.published = 1
        ORDER BY posts.id DESC`
     )
     .all();
@@ -50,7 +51,7 @@ router.get('/', (req, res) => {
 router.get('/mine', (req, res) => {
   const posts = db
     .prepare(
-      `SELECT id, title, created_at
+      `SELECT id, title, created_at, published
        FROM posts
        WHERE user_id = ?
        ORDER BY id DESC`
@@ -95,6 +96,23 @@ router.post('/:id', (req, res) => {
   }
   db.prepare('UPDATE posts SET title = ?, body = ? WHERE id = ?').run(title, body, post.id);
   res.redirect(`/posts/${post.id}`);
+});
+
+// Quick-action shortcuts linked from the listing page (and from notification
+// emails). Each route flips the publish state and bounces back to the
+// listing so the author sees the change immediately.
+router.get('/:id/publish', (req, res) => {
+  const post = loadOwnPost(req, res);
+  if (!post) return;
+  db.prepare('UPDATE posts SET published = 1 WHERE id = ?').run(post.id);
+  res.redirect('/posts/mine');
+});
+
+router.get('/:id/unpublish', (req, res) => {
+  const post = loadOwnPost(req, res);
+  if (!post) return;
+  db.prepare('UPDATE posts SET published = 0 WHERE id = ?').run(post.id);
+  res.redirect('/posts/mine');
 });
 
 router.post('/:id/delete', (req, res) => {

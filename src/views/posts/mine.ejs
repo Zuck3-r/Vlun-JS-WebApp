@@ -9,6 +9,13 @@
       <li>
         <a href="/posts/<%= p.id %>"><%= p.title %></a>
         <small>&mdash; <%= p.created_at %></small>
+        <% if (p.published) { %>
+          <span class="badge">published</span>
+          <a class="action" href="/posts/<%= p.id %>/unpublish">Unpublish</a>
+        <% } else { %>
+          <span class="badge draft">draft</span>
+          <a class="action" href="/posts/<%= p.id %>/publish">Publish</a>
+        <% } %>
         <a class="action" href="/posts/<%= p.id %>/edit">Edit</a>
       </li>
     <% }) %>
