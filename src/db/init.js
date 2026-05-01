@@ -19,10 +19,16 @@ function init() {
       user_id    INTEGER NOT NULL,
       title      TEXT NOT NULL,
       body       TEXT NOT NULL,
+      published  INTEGER NOT NULL DEFAULT 1,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
   `);
+
+  const postCols = db.prepare("PRAGMA table_info(posts)").all().map((c) => c.name);
+  if (!postCols.includes('published')) {
+    db.exec("ALTER TABLE posts ADD COLUMN published INTEGER NOT NULL DEFAULT 1");
+  }
 
   const count = db.prepare('SELECT COUNT(*) AS n FROM users').get().n;
   if (count === 0) {
