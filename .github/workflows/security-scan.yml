@@ -9,6 +9,6 @@ jobs:
       contents: read
       pull-requests: write
       id-token: write
-    uses: Zuck3-r/llm-security-scan/.github/workflows/scan.yml@v0.5.2
+    uses: Zuck3-r/llm-security-scan/.github/workflows/scan.yml@v0.5.3
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
