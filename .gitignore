@@ -3,3 +3,4 @@ src/db/data.sqlite
 .env
 .DS_Store
 npm-debug.log*
+.private/
