@@ -77,7 +77,10 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
   const post = getPostOr404(req, res);
   if (!post) return;
-  res.render('posts/show', { post });
+  const bookmarked = !!db
+    .prepare('SELECT 1 FROM bookmarks WHERE user_id = ? AND post_id = ?')
+    .get(req.session.user.id, post.id);
+  res.render('posts/show', { post, bookmarked });
 });
 
 router.get('/:id/edit', (req, res) => {

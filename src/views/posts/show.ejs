@@ -5,11 +5,26 @@
   <pre class="body"><%= post.body %></pre>
 </article>
 
+<p>
+  <% if (bookmarked) { %>
+    <form class="inline" method="post" action="/posts/<%= post.id %>/unbookmark">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button type="submit">Remove bookmark</button>
+    </form>
+  <% } else { %>
+    <form class="inline" method="post" action="/posts/<%= post.id %>/bookmark">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button type="submit">Bookmark</button>
+    </form>
+  <% } %>
+</p>
+
 <% if (user && user.id === post.user_id) { %>
   <p>
     <a href="/posts/<%= post.id %>/edit">Edit</a>
     <form class="inline" method="post" action="/posts/<%= post.id %>/delete"
           onsubmit="return confirm('Delete this post?');">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <button type="submit">Delete</button>
     </form>
   </p>

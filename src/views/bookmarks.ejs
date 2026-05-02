@@ -1,0 +1,16 @@
+<%- include('partials/header') %>
+<h1>Bookmarks</h1>
+<% if (bookmarks.length === 0) { %>
+  <p>You haven't bookmarked any posts yet.</p>
+<% } else { %>
+  <ul class="post-list">
+    <% bookmarks.forEach(function(b){ %>
+      <li>
+        <a href="/posts/<%= b.id %>"><%= b.title %></a>
+        <small>by <%= b.author %> &mdash; saved <%= b.created_at %></small>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>
+<p><a href="/posts">All posts</a></p>
+<%- include('partials/footer') %>

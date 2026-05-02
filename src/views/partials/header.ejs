@@ -12,11 +12,13 @@
       <% if (user) { %>
         <a href="/posts">Posts</a>
         <a href="/posts/mine">My posts</a>
+        <a href="/bookmarks">Bookmarks</a>
         <% if (user.role === 'administrator') { %>
           <a href="/admin">Admin</a>
         <% } %>
         <span class="who">Hello, <%= user.username %> (<%= user.role %>)</span>
         <form class="inline" method="post" action="/auth/logout">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <button type="submit">Logout</button>
         </form>
       <% } else { %>

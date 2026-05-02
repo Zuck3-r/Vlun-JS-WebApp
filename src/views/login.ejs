@@ -4,6 +4,7 @@
   <p class="error"><%= error %></p>
 <% } %>
 <form method="post" action="/auth/login">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
   <label>
     Username
     <input type="text" name="username" autocomplete="username" required />
