@@ -78,7 +78,16 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
   const post = getPostOr404(req, res);
   if (!post) return;
-  res.render('posts/show', { post });
+  const comments = db
+    .prepare(
+      `SELECT comments.id, comments.body, comments.created_at,
+              comments.user_id, users.username AS author
+       FROM comments JOIN users ON users.id = comments.user_id
+       WHERE comments.post_id = ?
+       ORDER BY comments.id ASC`
+    )
+    .all(post.id);
+  res.render('posts/show', { post, comments });
 });
 
 router.get('/:id/edit', (req, res) => {
