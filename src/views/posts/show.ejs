@@ -10,6 +10,7 @@
     <a href="/posts/<%= post.id %>/edit">Edit</a>
     <form class="inline" method="post" action="/posts/<%= post.id %>/delete"
           onsubmit="return confirm('Delete this post?');">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <button type="submit">Delete</button>
     </form>
   </p>

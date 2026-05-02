@@ -5,9 +5,11 @@ const cookieParser = require('cookie-parser');
 
 const { init: initDb, db } = require('./db/init');
 const { requireLogin } = require('./middleware/auth');
+const { csrfMiddleware } = require('./middleware/csrf');
 
 const authRoutes = require('./routes/auth');
 const postsRoutes = require('./routes/posts');
+const apiRoutes = require('./routes/api');
 const adminRoutes = require('./routes/admin');
 
 initDb();
@@ -40,6 +42,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(csrfMiddleware);
+
 app.get('/', requireLogin, (req, res) => {
   const recent = db
     .prepare(
@@ -53,6 +57,7 @@ app.get('/', requireLogin, (req, res) => {
 
 app.use('/auth', authRoutes);
 app.use('/posts', postsRoutes);
+app.use('/api', apiRoutes);
 app.use('/admin', adminRoutes);
 
 app.use((req, res) => {

@@ -4,6 +4,7 @@
   <p class="error"><%= error %></p>
 <% } %>
 <form method="post" action="/auth/register">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
   <label>
     Username
     <input type="text" name="username" required />
