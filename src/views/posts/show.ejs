@@ -10,10 +10,43 @@
     <a href="/posts/<%= post.id %>/edit">Edit</a>
     <form class="inline" method="post" action="/posts/<%= post.id %>/delete"
           onsubmit="return confirm('Delete this post?');">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <button type="submit">Delete</button>
     </form>
   </p>
 <% } %>
+
+<section class="comments">
+  <h2>Comments</h2>
+  <% if (comments && comments.length > 0) { %>
+    <ul class="comment-list">
+      <% comments.forEach(function(c){ %>
+        <li>
+          <p class="meta"><strong><%= c.author %></strong> &mdash; <%= c.created_at %></p>
+          <pre class="body"><%= c.body %></pre>
+          <% if (user && user.id === c.user_id) { %>
+            <form class="inline" method="post" action="/comments/<%= c.id %>/delete"
+                  onsubmit="return confirm('Delete this comment?');">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit">Delete</button>
+            </form>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p>No comments yet.</p>
+  <% } %>
+
+  <form method="post" action="/posts/<%= post.id %>/comments" class="comment-form">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <label>
+      Add a comment
+      <textarea name="body" rows="3" required></textarea>
+    </label>
+    <button type="submit">Post comment</button>
+  </form>
+</section>
 
 <p><a href="/posts">Back to list</a></p>
 <%- include('../partials/footer') %>
