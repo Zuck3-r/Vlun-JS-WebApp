@@ -10,6 +10,7 @@ const { csrfMiddleware } = require('./middleware/csrf');
 const authRoutes = require('./routes/auth');
 const postsRoutes = require('./routes/posts');
 const commentsRoutes = require('./routes/comments');
+const promoRoutes = require('./routes/promo');
 const adminRoutes = require('./routes/admin');
 
 initDb();
@@ -58,6 +59,7 @@ app.get('/', requireLogin, (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/posts', postsRoutes);
 app.use('/', commentsRoutes);
+app.use('/promo', promoRoutes);
 app.use('/admin', adminRoutes);
 
 app.use((req, res) => {

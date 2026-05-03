@@ -1,0 +1,34 @@
+<%- include('../partials/header') %>
+<h1>Rewards</h1>
+<p>Enter a promo code to claim a reward.</p>
+
+<% if (error) { %>
+  <p class="error"><%= error %></p>
+<% } %>
+<% if (message) { %>
+  <p class="ok"><%= message %></p>
+<% } %>
+
+<form method="post" action="/promo/redeem">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+  <label>
+    Promo code
+    <input type="text" name="code" required autofocus />
+  </label>
+  <button type="submit">Redeem</button>
+</form>
+
+<h2>Your rewards</h2>
+<% if (history.length === 0) { %>
+  <p>No rewards yet.</p>
+<% } else { %>
+  <ul class="reward-list">
+    <% history.forEach(function(h){ %>
+      <li>
+        <strong><%= h.reward_label %></strong>
+        <small>(<%= h.code %>) &mdash; <%= h.created_at %></small>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>
+<%- include('../partials/footer') %>

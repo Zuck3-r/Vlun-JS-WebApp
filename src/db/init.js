@@ -33,6 +33,24 @@ function init() {
       FOREIGN KEY (post_id) REFERENCES posts(id),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
+
+    CREATE TABLE IF NOT EXISTS promo_codes (
+      id           INTEGER PRIMARY KEY AUTOINCREMENT,
+      code         TEXT NOT NULL UNIQUE,
+      reward_label TEXT NOT NULL,
+      max_uses     INTEGER NOT NULL DEFAULT 1,
+      used_count   INTEGER NOT NULL DEFAULT 0,
+      created_at   TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS promo_redemptions (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      code_id    INTEGER NOT NULL,
+      user_id    INTEGER NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (code_id) REFERENCES promo_codes(id),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
   `);
 
   const postCols = db.prepare("PRAGMA table_info(posts)").all().map((c) => c.name);
@@ -61,6 +79,15 @@ function init() {
     );
     insertPost.run(adminId, 'Welcome', 'This is the first post by admin.');
     insertPost.run(user1Id, 'Hello', 'A friendly hello from user1.');
+  }
+
+  const promoCount = db.prepare('SELECT COUNT(*) AS n FROM promo_codes').get().n;
+  if (promoCount === 0) {
+    const insertCode = db.prepare(
+      'INSERT INTO promo_codes (code, reward_label, max_uses) VALUES (?, ?, ?)'
+    );
+    insertCode.run('WELCOME', 'Welcome bonus badge', 1);
+    insertCode.run('SPRING', 'Spring campaign sticker', 100);
   }
 }
 
