@@ -3,6 +3,17 @@
   <h1><%= post.title %></h1>
   <p class="meta">by <%= post.author %> &mdash; <%= post.created_at %></p>
   <pre class="body"><%= post.body %></pre>
+  <p class="reactions">
+    <span class="count"><%= post.reactions_count %> reactions</span>
+    <% if (!reactedByMe) { %>
+      <form class="inline" method="post" action="/posts/<%= post.id %>/react">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <button type="submit">React</button>
+      </form>
+    <% } else { %>
+      <span class="reacted">You reacted</span>
+    <% } %>
+  </p>
 </article>
 
 <% if (user && user.id === post.user_id) { %>

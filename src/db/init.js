@@ -33,11 +33,23 @@ function init() {
       FOREIGN KEY (post_id) REFERENCES posts(id),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
+
+    CREATE TABLE IF NOT EXISTS reactions (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      post_id    INTEGER NOT NULL,
+      user_id    INTEGER NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (post_id) REFERENCES posts(id),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
   `);
 
   const postCols = db.prepare("PRAGMA table_info(posts)").all().map((c) => c.name);
   if (!postCols.includes('published')) {
     db.exec("ALTER TABLE posts ADD COLUMN published INTEGER NOT NULL DEFAULT 1");
+  }
+  if (!postCols.includes('reactions_count')) {
+    db.exec("ALTER TABLE posts ADD COLUMN reactions_count INTEGER NOT NULL DEFAULT 0");
   }
 
   const count = db.prepare('SELECT COUNT(*) AS n FROM users').get().n;

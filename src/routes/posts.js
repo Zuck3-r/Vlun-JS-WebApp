@@ -1,6 +1,10 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const { db } = require('../db/init');
 const { requireLogin } = require('../middleware/auth');
+
+const reactionLogPath = path.join(__dirname, '..', '..', 'reactions.log');
 
 const router = express.Router();
 
@@ -87,7 +91,10 @@ router.get('/:id', (req, res) => {
        ORDER BY comments.id ASC`
     )
     .all(post.id);
-  res.render('posts/show', { post, comments });
+  const reacted = db
+    .prepare('SELECT 1 FROM reactions WHERE post_id = ? AND user_id = ?')
+    .get(post.id, req.session.user.id);
+  res.render('posts/show', { post, comments, reactedByMe: Boolean(reacted) });
 });
 
 router.get('/:id/edit', (req, res) => {
@@ -122,6 +129,32 @@ router.get('/:id/unpublish', (req, res) => {
   if (!post) return;
   db.prepare('UPDATE posts SET published = 0 WHERE id = ?').run(post.id);
   res.redirect('/posts/mine');
+});
+
+// Records a reaction from the current user. Each user can react once per
+// post. Reaction history is appended to a flat log file so the activity
+// feed worker can replay it nightly.
+router.post('/:id/react', async (req, res) => {
+  const post = getPostOr404(req, res);
+  if (!post) return;
+  const userId = req.session.user.id;
+
+  const existing = db
+    .prepare('SELECT id FROM reactions WHERE post_id = ? AND user_id = ?')
+    .get(post.id, userId);
+  if (existing) {
+    return res.redirect(`/posts/${post.id}`);
+  }
+
+  await fs.promises.appendFile(
+    reactionLogPath,
+    `${new Date().toISOString()} user=${userId} post=${post.id}\n`
+  );
+
+  db.prepare('INSERT INTO reactions (post_id, user_id) VALUES (?, ?)').run(post.id, userId);
+  db.prepare('UPDATE posts SET reactions_count = reactions_count + 1 WHERE id = ?').run(post.id);
+
+  res.redirect(`/posts/${post.id}`);
 });
 
 router.post('/:id/delete', (req, res) => {
