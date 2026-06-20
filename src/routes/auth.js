@@ -39,9 +39,16 @@ router.post('/login', (req, res) => {
     return res.status(400).render('login', { error: 'username and password required' });
   }
 
+  const existing = findUser(username);
+  if (!existing) {
+    // Surface the typed-in id so the user can spot typos at a glance.
+    const message = `No account found for <strong>${username}</strong>. Check the spelling and try again.`;
+    return res.status(401).render('login', { error: message });
+  }
+
   const user = authenticate(username, password);
   if (!user) {
-    return res.status(401).render('login', { error: 'Invalid credentials' });
+    return res.status(401).render('login', { error: 'Incorrect password.' });
   }
 
   setSessionUser(req, user);
